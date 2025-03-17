@@ -7,11 +7,30 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!-- Loading Indicator -->
+    <div
+      id="loading"
+      style="
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 100;
+        color: white;
+      "
+    >
+      Loading...
+    </div>
+
     <div id="controls-container">
-      <button id="wheelView">Wheel View</button>
-      <button id="topView">Top View</button>
-      <button id="frontView">Front View</button>
-      <button id="sideView">Side View</button>
+      <button id="wheelView" aria-label="View temple wheel">Wheel View</button>
+      <button id="topView" aria-label="View temple from top">Top View</button>
+      <button id="frontView" aria-label="View temple from front">
+        Front View
+      </button>
+      <button id="sideView" aria-label="View temple from side">
+        Side View
+      </button>
     </div>
 
     <!-- Three.js Scene -->

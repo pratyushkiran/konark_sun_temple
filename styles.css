@@ -1,3 +1,4 @@
+/* Reset and Base Styles (unchanged) */
 * {
   margin: 0;
   padding: 0;
@@ -8,9 +9,10 @@ body {
   font-family: Arial, sans-serif;
   color: white;
   overflow-x: hidden;
-  background-color: #000; /* Default black background for the entire page */
+  background-color: #000;
 }
 
+/* Controls Container */
 #controls-container {
   position: absolute;
   top: 10px;
@@ -20,123 +22,105 @@ body {
 
 button {
   margin: 5px;
-  padding: 5px 10px;
+  padding: 8px 16px;
   cursor: pointer;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
 }
 
+button:hover {
+  background-color: #555;
+}
+
+/* Three.js Container */
 #threejs-container {
   width: 100vw;
   height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1-9;
-  /* Remove background-color: #333 if not needed */
+  z-index: 10; /* Fixed typo from 1-9 to a valid value */
 }
 
+/* Gradient Section */
 .gradient-section {
   position: relative;
-  top: 0px; /* Adjust based on gradient height */
-  z-index: 2;
-  height: 800px; /* Fixed height for gradient */
+  z-index: 20;
+  height: 800px;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 1)
+    rgba(255, 255, 255, 0) 0%,
+    rgba(0, 0, 0, 0) 50%,
+    rgb(0, 0, 0) 100%
   );
   display: flex;
   justify-content: center;
-  align-items: flex-end; /* Push title to bottom of gradient */
-  padding-top: 20px;
-  padding-bottom: 20px;
-
-  pointer-events: none; /*  Allow clicks to pass through */
+  align-items: flex-end;
+  padding-bottom: 0px;
+  pointer-events: none;
 }
 
 h1 {
   font-size: 4rem;
   text-transform: uppercase;
-  padding: 0px 20px;
+  padding: 0 30px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
+/* Main Content */
 .main-content {
   position: relative;
-  z-index: 2;
-  background-color: #000; /* Solid black background */
-  /* Optional: Replace with texture */
-  /* background-image: url('path-to-texture.jpg'); */
-  /* background-size: cover; */
-  /* background-repeat: no-repeat; */
-  /* padding: 50px 20px; */
-  text-align: center;
+  z-index: 20;
+  background-color: #000;
+  padding: 0px 10px;
 }
 
 .intro {
-  max-width: 800px;
-  margin: 0 auto 40px;
-  font-size: 0.8rem;
-  line-height: 1.6;
+  padding: 40px 30px;
 }
 
 /* Side-by-Side Layout */
 .side-by-side {
   display: flex;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
   justify-content: center;
-  align-items: flex-start;
-  gap: 20px; /* Space between map and gallery */
-  max-width: 1200px; /* Limit width for larger screens */
-  margin: 0 auto 40px; /* Center and space below */
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto 40px;
 }
 
-.map {
-  flex: 1; /* Equal width for map and gallery */
-  max-width: 600px; /* Cap width */
+.map,
+.gallery {
+  flex: 1;
+  min-width: 300px; /* Ensure readability on smaller screens */
+  max-width: 600px;
 }
 
 .gallery {
-  flex: 1; /* Equal width */
   display: flex;
-  flex-wrap: wrap; /* Allow images to wrap if needed */
+  flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
 }
 
-.tripadvisorcomponentUISample {
-  margin: 0;
-  padding: 0;
-}
-
-.tripadvisorcomponentUISample img {
-  width: 100%;
-  margin: 0;
-  /* height: 500px; Fixed height for consistency */
-}
 .gallery img {
-  width: 150px; /* Fixed width for consistency */
+  width: 150px;
   height: 100px;
   object-fit: cover;
   border-radius: 5px;
+  transition: transform 0.3s;
 }
 
-.services {
-  max-width: 600px;
-  margin: 40px auto;
+.gallery img:hover {
+  transform: scale(1.05);
 }
 
-.services h2 {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-}
-
-.services ul {
-  list-style: none;
-  text-align: left;
-  margin: 0 auto;
-  max-width: 300px;
-}
-
-.services li {
-  margin: 10px 0;
+/* Loading Indicator */
+#loading {
+  display: none; /* Hidden by default, shown via JS */
+  font-size: 1.5rem;
+  text-align: center;
 }
