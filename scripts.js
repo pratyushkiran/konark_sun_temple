@@ -86,19 +86,6 @@ rgbeLoader.load(
   }
 );
 
-// Ground plane
-// const planeGeometry = new THREE.PlaneGeometry(100, 100);
-// const planeMaterial = new THREE.MeshStandardMaterial({
-//   color: 0x808080,
-//   roughness: 0.8,
-//   metalness: 0.2,
-// });
-// const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-// plane.rotation.x = -Math.PI / 2;
-// plane.position.y = -5;
-// plane.receiveShadow = true;
-// scene.add(plane);
-
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
@@ -162,6 +149,7 @@ document.getElementById("wheelView").addEventListener("click", () => {
     new THREE.Vector3(0, maxDim * 0.5, maxDim * 1.5), // Position
     new THREE.Vector3(0, 0, 0) // Target
   );
+  controls.autoRotate = false;
   console.log("Wheel View Selected");
 });
 
@@ -171,6 +159,7 @@ document.getElementById("topView").addEventListener("click", () => {
     new THREE.Vector3(0, 0, 0) // Target
   );
   console.log("Top View Selected");
+  controls.autoRotate = false;
 });
 
 document.getElementById("frontView").addEventListener("click", () => {
