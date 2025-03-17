@@ -6,6 +6,13 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
+
+camera.position.set(15, 15, 30);
+camera.lookAt(0, 0, 0);
+
+axesHelper = new THREE.AxesHelper(205);
+scene.add(axesHelper);
+
 const renderer = new THREE.WebGLRenderer({
   antialias: true,
   physicallyCorrectLights: true,
@@ -39,9 +46,9 @@ loader.load(
     const size = box.getSize(new THREE.Vector3());
     model.position.sub(center);
     const maxDim = Math.max(size.x, size.y, size.z);
-    model.scale.set(3, 3, 3);
+    model.scale.set(1, 1, 1);
     model.position.set(0, 0, 0);
-    model.rotation.set(0, Math.PI - Math.PI / 6, 0);
+    model.rotation.set(0, 0, 0);
 
     // Enable shadows and set environment map for all meshes
     model.traverse((child) => {
@@ -54,8 +61,8 @@ loader.load(
       }
     });
 
-    camera.position.set(0, maxDim, maxDim * 1.5);
-    camera.lookAt(0, 0, 0);
+    // camera.position.set(0, maxDim, maxDim * 1.5);
+    // camera.lookAt(0, 0, 0);
   },
   (progress) => {
     console.log(
@@ -109,8 +116,8 @@ const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 controls.screenSpacePanning = false;
-controls.minDistance = 70;
-controls.maxDistance = 130;
+controls.minDistance = 25;
+controls.maxDistance = 50;
 controls.enablePan = true;
 controls.minPolarAngle = Math.PI / 12;
 controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12;
@@ -119,7 +126,7 @@ controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12;
 function animate() {
   requestAnimationFrame(animate);
   controls.autoRotate = true;
-  controls.autoRotateSpeed = 0.3;
+  controls.autoRotateSpeed = 0.1;
   controls.update();
   renderer.render(scene, camera);
 }
