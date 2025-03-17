@@ -30,7 +30,7 @@ button {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 1-9;
   /* Remove background-color: #333 if not needed */
 }
 
@@ -51,12 +51,14 @@ button {
   align-items: flex-end; /* Push title to bottom of gradient */
   padding-top: 20px;
   padding-bottom: 20px;
-  pointer-events: none; /* Allow clicks to pass through */
+
+  pointer-events: none; /*  Allow clicks to pass through */
 }
 
 h1 {
   font-size: 4rem;
   text-transform: uppercase;
+  padding: 0px 20px;
 }
 
 .main-content {

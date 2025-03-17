@@ -29,7 +29,7 @@ dracoLoader.setDecoderConfig({ type: "js" });
 const loader = new THREE.GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 loader.load(
-  "3D Models/konark_optimised_13mb.glb",
+  "assets/3D Models/konark_optimised_13mb.glb",
   (gltf) => {
     const model = gltf.scene;
     scene.add(model);
@@ -87,17 +87,17 @@ rgbeLoader.load(
 );
 
 // Ground plane
-const planeGeometry = new THREE.PlaneGeometry(100, 100);
-const planeMaterial = new THREE.MeshStandardMaterial({
-  color: 0x808080,
-  roughness: 0.8,
-  metalness: 0.2,
-});
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-plane.rotation.x = -Math.PI / 2;
-plane.position.y = -5;
-plane.receiveShadow = true;
-scene.add(plane);
+// const planeGeometry = new THREE.PlaneGeometry(100, 100);
+// const planeMaterial = new THREE.MeshStandardMaterial({
+//   color: 0x808080,
+//   roughness: 0.8,
+//   metalness: 0.2,
+// });
+// const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+// plane.rotation.x = -Math.PI / 2;
+// plane.position.y = -5;
+// plane.receiveShadow = true;
+// scene.add(plane);
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -122,8 +122,8 @@ const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 controls.screenSpacePanning = false;
-controls.minDistance = 30;
-controls.maxDistance = 100;
+controls.minDistance = 70;
+controls.maxDistance = 130;
 controls.enablePan = true;
 controls.minPolarAngle = Math.PI / 12;
 controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12;
