@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Konark Sun Temple</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="controls-container">
+      <button id="wheelView">Wheel View</button>
+      <button id="topView">Top View</button>
+      <button id="frontView">Front View</button>
+      <button id="sideView">Side View</button>
+    </div>
+    <!-- <div id="threejs-container"></div> -->
+    <!-- Three.js Scene -->
+    <div id="threejs-container"></div>
+
+    <!-- Gradient Section -->
+    <section class="gradient-section">
+      <h1>KONARK SUN TEMPLE</h1>
+    </section>
+
+    <!-- Main Content -->
+    <section class="main-content">
+      <p class="intro">
+        The Konark Sun Temple, located in Odisha, India, is a 13th-century CE
+        architectural marvel dedicated to the Sun God, Surya. Built by King
+        Narasimhadeva I of the Eastern Ganga Dynasty, it is designed as a
+        massive chariot with intricately carved stone wheels, pillars, and
+        walls.
+      </p>
+
+      <!-- Side-by-Side Container -->
+      <div class="side-by-side">
+        <!-- Map -->
+        <div class="map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3742.258392086494!2d86.09155307519466!3d19.88758998151897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a19e5f9b8e8e8d5%3A0x1c5f5b8f5e8f5e8!2sKonark%20Sun%20Temple!5e0!3m2!1sen!2sin!4v1677654321897!5m2!1sen!2sin"
+            width="100%"
+            height="300"
+            style="border: 0"
+            allowfullscreen="true"
+            loading="lazy"
+          >
+          </iframe>
+        </div>
+
+        <!-- Photo Gallery -->
+        <div class="gallery">
+          <img src="Konark Images/1.jpg" alt="Konark Image 1" />
+          <img src="Konark Images/2.jpg" alt="Konark Image 2" />
+          <img src="Konark Images/4.jpg" alt="Konark Image 3" />
+          <img src="Konark Images/11649.jpg" alt="Konark Image 4" />
+          <img src="Konark Images/6.jpg" alt="Konark Image 5" />
+          <img src="Konark Images/1.jpg" alt="Konark Image 1" />
+          <img src="Konark Images/2.jpg" alt="Konark Image 2" />
+          <img src="Konark Images/4.jpg" alt="Konark Image 3" />
+          <img src="Konark Images/11649.jpg" alt="Konark Image 4" />
+        </div>
+      </div>
+
+      <div class="tripadvisorcomponentUISample">
+        <img src="Webpage Design UI/image1.png" alt="" />
+        <img src="Webpage Design UI/image2.png" alt="" />
+        <img src="Webpage Design UI/image3.png" alt="" />
+        <img src="Webpage Design UI/image4.png" alt="" />
+      </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/loaders/DRACOLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/loaders/RGBELoader.js"></script>
+    <!-- For HDRI -->
+    <script src="scripts.js"></script>
+  </body>
+</html>
