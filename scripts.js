@@ -45,7 +45,7 @@ loader.load(
     model.position.sub(center);
     const maxDim = Math.max(size.x, size.y, size.z);
     model.scale.set(1, 1, 1);
-    model.position.set(0, 0, 0);
+    model.position.set(0, -1, 0);
 
     model.traverse((child) => {
       if (child.isMesh) {
@@ -86,12 +86,20 @@ rgbeLoader.load(
   }
 );
 
+// // axes helper
+// const axesHelper = new THREE.AxesHelper(100);
+// scene.add(axesHelper);
+
+// // grid helper
+// const gridHelper = new THREE.GridHelper(100, 100); // 100x100 units, 10 divisions
+// scene.add(gridHelper);
+
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-directionalLight.position.set(5, 10, -7.5);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(5, 10, -6);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.set(1024, 1024);
 directionalLight.shadow.camera.near = 0.1;
