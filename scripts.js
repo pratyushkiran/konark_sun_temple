@@ -157,21 +157,21 @@ document.getElementById("wheelView").addEventListener("click", () => {
 
 document.getElementById("topView").addEventListener("click", () => {
   setCameraView(
-    new THREE.Vector3(0, maxDim * 2, 0), // Directly above
+    new THREE.Vector3(0, maxDim * 4, 0), // Directly above
     new THREE.Vector3(0, 0, 0)
   );
 });
 
 document.getElementById("frontView").addEventListener("click", () => {
   setCameraView(
-    new THREE.Vector3(0, maxDim * 0.8, maxDim * 1.5), // Front-facing
+    new THREE.Vector3(0, maxDim * 0.8, maxDim * 2), // Front-facing
     new THREE.Vector3(0, 0, 0)
   );
 });
 
 document.getElementById("sideView").addEventListener("click", () => {
   setCameraView(
-    new THREE.Vector3(maxDim * 1.5, maxDim * 0.8, 0), // Side-facing
+    new THREE.Vector3(maxDim * 2, maxDim * 0.8, 0), // Side-facing
     new THREE.Vector3(0, 0, 0)
   );
 });
