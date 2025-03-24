@@ -1,186 +1,185 @@
-// Scene, Camera, Renderer
+// Core Three.js Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
+  75, // Field of view
+  window.innerWidth / window.innerHeight, // Aspect ratio
+  0.1, // Near clipping plane
+  1000 // Far clipping plane
 );
-camera.position.set(15, 15, 30);
+camera.position.set(15, 15, 30); // Initial camera position
 
 const renderer = new THREE.WebGLRenderer({
-  antialias: true,
-  physicallyCorrectLights: true,
+  antialias: true, // Smooth edges
+  physicallyCorrectLights: true, // Accurate lighting calculations
 });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.outputEncoding = THREE.sRGBEncoding;
-document.getElementById("threejs-container").appendChild(renderer.domElement);
+renderer.setSize(window.innerWidth, window.innerHeight); // Set renderer size to window
+renderer.shadowMap.enabled = true; // Enable shadow mapping
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Soft shadow type
+renderer.outputEncoding = THREE.sRGBEncoding; // Color encoding for realism
+document.getElementById("threejs-container").appendChild(renderer.domElement); // Attach renderer to DOM
 
-// Draco Loader Setup
+// Draco Loader Configuration
 const dracoLoader = new THREE.DRACOLoader();
 dracoLoader.setDecoderPath(
-  "https://cdn.jsdelivr.net/npm/three@0.134/examples/js/libs/draco/"
+  "https://cdn.jsdelivr.net/npm/three@0.134/examples/js/libs/draco/" // Path to Draco decoder
 );
 
-const loadingIndicator = document.getElementById("loading");
-loadingIndicator.style.display = "block"; // Show loading
-
-// GLTF Loader
+// GLTF Loader Configuration
 const loader = new THREE.GLTFLoader();
-loader.setDRACOLoader(dracoLoader);
+loader.setDRACOLoader(dracoLoader); // Enable Draco compression
+const loadingIndicator = document.getElementById("loading"); // Loading UI element
+loadingIndicator.style.display = "block"; // Show loading indicator
 
+// Model Loading
 loader.load(
-  "assets/3D Models/konark_texture_reprojected_8k_8.glb",
+  "assets/3D Models/konark_texture_reprojected_8k_8.glb", // Model file path
   (gltf) => {
     const model = gltf.scene;
-    scene.add(model);
+    scene.add(model); // Add model to scene
 
+    // Center and scale model
     const box = new THREE.Box3().setFromObject(model);
     const center = box.getCenter(new THREE.Vector3());
     const size = box.getSize(new THREE.Vector3());
-    model.position.sub(center);
-    const maxDim = Math.max(size.x, size.y, size.z);
-    model.scale.set(1, 1, 1);
-    model.position.set(0, -1, 0);
+    model.position.sub(center); // Center model at origin
+    const maxDim = Math.max(size.x, size.y, size.z); // Calculate maximum dimension
+    model.scale.set(1, 1, 1); // Uniform scaling
+    model.position.set(0, -1, 0); // Slight downward adjustment
 
+    // Configure mesh properties for shadows and environment mapping
     model.traverse((child) => {
       if (child.isMesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-        child.material.envMap = scene.environment;
-        child.material.envMapIntensity = 1.0;
-        child.material.needsUpdate = true;
+        child.castShadow = true; // Enable shadow casting
+        child.receiveShadow = true; // Enable shadow receiving
+        child.material.envMap = scene.environment; // Apply environment map
+        child.material.envMapIntensity = 1.0; // Environment map intensity
+        child.material.needsUpdate = true; // Update material
       }
     });
 
-    loadingIndicator.style.display = "none"; // Hide loading
+    loadingIndicator.style.display = "none"; // Hide loading indicator on success
   },
   (progress) => {
+    // Log loading progress
     console.log(
       `Loading model: ${((progress.loaded / progress.total) * 100).toFixed(2)}%`
     );
   },
   (error) => {
+    // Handle loading errors
     console.error("Model loading failed:", error);
-    loadingIndicator.textContent = "Error loading model";
+    loadingIndicator.textContent = "Error loading model"; // Update UI with error
   }
 );
 
-// HDRI Loading
+// HDRI Environment Setup
 const rgbeLoader = new THREE.RGBELoader();
-rgbeLoader.setDataType(THREE.FloatType);
+rgbeLoader.setDataType(THREE.FloatType); // High precision texture data
 rgbeLoader.load(
-  "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
+  "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr", // HDRI file path
   (texture) => {
-    texture.mapping = THREE.EquirectangularReflectionMapping;
-    scene.environment = texture;
-    scene.background = texture;
+    texture.mapping = THREE.EquirectangularReflectionMapping; // Map texture as environment
+    scene.environment = texture; // Set as scene environment
+    scene.background = texture; // Set as scene background
   },
   undefined,
   (error) => {
-    console.error("HDRI loading failed:", error);
+    console.error("HDRI loading failed:", error); // Log HDRI loading errors
   }
 );
 
-// // axes helper
-// const axesHelper = new THREE.AxesHelper(100);
+// Debug Helpers (Uncomment to use)
+// const axesHelper = new THREE.AxesHelper(100); // Axes visualization
 // scene.add(axesHelper);
-
-// // grid helper
-// const gridHelper = new THREE.GridHelper(100, 100); // 100x100 units, 10 divisions
+// const gridHelper = new THREE.GridHelper(100, 100); // Grid visualization (100x100 units, 10 divisions)
 // scene.add(gridHelper);
 
-// Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+// Lighting Setup
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Soft ambient light
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(5, 10, -6);
-directionalLight.castShadow = true;
-directionalLight.shadow.mapSize.set(1024, 1024);
-directionalLight.shadow.camera.near = 0.1;
-directionalLight.shadow.camera.far = 50;
-directionalLight.shadow.camera.left = -20;
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1); // Main directional light
+directionalLight.position.set(5, 10, -6); // Light position
+directionalLight.castShadow = true; // Enable shadows
+directionalLight.shadow.mapSize.set(1024, 1024); // Shadow map resolution
+directionalLight.shadow.camera.near = 0.1; // Shadow camera near plane
+directionalLight.shadow.camera.far = 50; // Shadow camera far plane
+directionalLight.shadow.camera.left = -20; // Shadow camera bounds
 directionalLight.shadow.camera.right = 20;
 directionalLight.shadow.camera.top = 20;
 directionalLight.shadow.camera.bottom = -20;
-directionalLight.shadow.bias = -0.0001;
+directionalLight.shadow.bias = -0.0001; // Reduce shadow artifacts
 scene.add(directionalLight);
 
-// Orbit Controls
+// Orbit Controls Configuration
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.minDistance = 20;
-controls.maxDistance = 50;
-controls.minPolarAngle = Math.PI / 12;
-controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12;
+controls.enableDamping = true; // Smooth camera movement
+controls.dampingFactor = 0.05; // Damping intensity
+controls.minDistance = 20; // Minimum zoom distance
+controls.maxDistance = 50; // Maximum zoom distance
+controls.minPolarAngle = Math.PI / 12; // Limit vertical rotation (min)
+controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12; // Limit vertical rotation (max)
 
 // Animation Loop
 function animate() {
-  requestAnimationFrame(animate);
-  controls.update();
-  controls.autoRotate = true;
-  controls.autoRotateSpeed = 0.1;
-  renderer.render(scene, camera);
+  requestAnimationFrame(animate); // Recursive animation frame request
+  controls.update(); // Update orbit controls
+  controls.autoRotate = true; // Enable auto-rotation
+  controls.autoRotateSpeed = 0.1; // Rotation speed
+  renderer.render(scene, camera); // Render the scene
 }
-animate();
+animate(); // Start animation loop
 
-// Resize Handler
+// Window Resize Handler
 window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight; // Update aspect ratio
+  camera.updateProjectionMatrix(); // Apply updated projection
+  renderer.setSize(window.innerWidth, window.innerHeight); // Resize renderer
 });
 
-// Camera View Transitions
+// Camera View Transition Function
 function setCameraView(position, target) {
   gsap.to(camera.position, {
     x: position.x,
     y: position.y,
     z: position.z,
-    duration: 1.5,
-    ease: "power2.inOut",
+    duration: 1.5, // Animation duration
+    ease: "power2.inOut", // Smooth easing
     onUpdate: () => {
-      camera.lookAt(target);
-      controls.target.copy(target);
-      controls.update();
+      camera.lookAt(target); // Keep camera focused on target
+      controls.target.copy(target); // Update control target
+      controls.update(); // Apply control updates
     },
   });
-  controls.autoRotate = false;
+  controls.autoRotate = false; // Disable auto-rotation during transition
 }
 
-// Button Event Listeners with Refined Positions
-const maxDim = 14; // Assuming this is the model's max dimension
+// Button Event Listeners for Camera Views
+const maxDim = 14; // Model's maximum dimension for positioning
 document.getElementById("wheelView").addEventListener("click", () => {
   setCameraView(
     new THREE.Vector3(0, maxDim * 0.5, maxDim * 1.2), // Closer to wheel details
-    new THREE.Vector3(0, 0, 0)
+    new THREE.Vector3(0, 0, 0) // Target center
   );
 });
 
 document.getElementById("topView").addEventListener("click", () => {
   setCameraView(
     new THREE.Vector3(0, maxDim * 4, 0), // Directly above
-    new THREE.Vector3(0, 0, 0)
+    new THREE.Vector3(0, 0, 0) // Target center
   );
 });
 
 document.getElementById("frontView").addEventListener("click", () => {
   setCameraView(
-    new THREE.Vector3(0, maxDim * 0.8, maxDim * 2), // Front-facing
-    new THREE.Vector3(0, 0, 0)
+    new THREE.Vector3(0, maxDim * 0.8, maxDim * 2), // Front-facing view
+    new THREE.Vector3(0, 0, 0) // Target center
   );
 });
 
 document.getElementById("sideView").addEventListener("click", () => {
   setCameraView(
-    new THREE.Vector3(maxDim * 2, maxDim * 0.8, 0), // Side-facing
-    new THREE.Vector3(0, 0, 0)
+    new THREE.Vector3(maxDim * 2, maxDim * 0.8, 0), // Side-facing view
+    new THREE.Vector3(0, 0, 0) // Target center
   );
 });
-
-// Include GSAP for smooth transitions (add this script in HTML)
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
