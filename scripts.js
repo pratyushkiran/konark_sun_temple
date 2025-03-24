@@ -4,7 +4,7 @@ const camera = new THREE.PerspectiveCamera(
   75, // Field of view
   window.innerWidth / window.innerHeight, // Aspect ratio
   0.1, // Near clipping plane
-  100000 // Far clipping plane
+  10000 // Far clipping plane
 );
 camera.position.set(15, 15, 30); // Initial camera position
 
