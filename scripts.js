@@ -4,7 +4,7 @@ const camera = new THREE.PerspectiveCamera(
   75, // Field of view
   window.innerWidth / window.innerHeight, // Aspect ratio
   0.1, // Near clipping plane
-  1000 // Far clipping plane
+  100000 // Far clipping plane
 );
 camera.position.set(15, 15, 30); // Initial camera position
 
@@ -18,6 +18,9 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Soft shadow type
 renderer.outputEncoding = THREE.sRGBEncoding; // Color encoding for realism
 document.getElementById("threejs-container").appendChild(renderer.domElement); // Attach renderer to DOM
 
+// Add Clock for Animation Timing
+const clock = new THREE.Clock();
+
 // Draco Loader Configuration
 const dracoLoader = new THREE.DRACOLoader();
 dracoLoader.setDecoderPath(
@@ -30,9 +33,12 @@ loader.setDRACOLoader(dracoLoader); // Enable Draco compression
 const loadingIndicator = document.getElementById("loading"); // Loading UI element
 loadingIndicator.style.display = "block"; // Show loading indicator
 
+// Animation Mixer Variable
+let mixer; // To control animations
+
 // Model Loading
 loader.load(
-  "assets/3D Models/konark_texture_reprojected_8k_10.glb", // Model file path
+  "assets/3D Models/konark_texture_reprojected_8k_11_animated_birds_included.glb", // Model file path
   (gltf) => {
     const model = gltf.scene;
     scene.add(model); // Add model to scene
@@ -56,6 +62,18 @@ loader.load(
         child.material.needsUpdate = true; // Update material
       }
     });
+
+    // Set up Animation Mixer and Play Animations
+    mixer = new THREE.AnimationMixer(model);
+    const animations = gltf.animations; // Array of animation clips
+    if (animations && animations.length > 0) {
+      animations.forEach((clip) => {
+        const action = mixer.clipAction(clip);
+        action.play(); // Play all animations (e.g., birds flapping)
+      });
+    } else {
+      console.log("No animations found in the .glb file.");
+    }
 
     loadingIndicator.style.display = "none"; // Hide loading indicator on success
   },
@@ -130,6 +148,8 @@ controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12; // Limit vertical rotation 
 // Animation Loop
 function animate() {
   requestAnimationFrame(animate); // Recursive animation frame request
+  const delta = clock.getDelta(); // Get time delta for animation updates
+  if (mixer) mixer.update(delta); // Update animations
   controls.update(); // Update orbit controls
   controls.autoRotate = true; // Enable auto-rotation
   controls.autoRotateSpeed = 0.1; // Rotation speed
