@@ -94,6 +94,8 @@ rgbeLoader.load(
 // const gridHelper = new THREE.GridHelper(100, 100); // Grid visualization (100x100 units, 10 divisions)
 // scene.add(gridHelper);
 
+// birds will be added here
+
 // Lighting Setup
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Soft ambient light
 scene.add(ambientLight);
