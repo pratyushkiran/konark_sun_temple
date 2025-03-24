@@ -32,7 +32,7 @@ loadingIndicator.style.display = "block"; // Show loading indicator
 
 // Model Loading
 loader.load(
-  "assets/3D Models/konark_texture_reprojected_8k_8.glb", // Model file path
+  "assets/3D Models/konark_texture_reprojected_8k_10.glb", // Model file path
   (gltf) => {
     const model = gltf.scene;
     scene.add(model); // Add model to scene
