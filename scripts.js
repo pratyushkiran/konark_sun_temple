@@ -15,8 +15,6 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.5;
 renderer.outputEncoding = THREE.sRGBEncoding;
 document.getElementById("threejs-container").appendChild(renderer.domElement);
 
@@ -26,15 +24,15 @@ dracoLoader.setDecoderPath(
   "https://cdn.jsdelivr.net/npm/three@0.134/examples/js/libs/draco/"
 );
 
+const loadingIndicator = document.getElementById("loading");
+loadingIndicator.style.display = "block"; // Show loading
+
 // GLTF Loader
 const loader = new THREE.GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 
-const loadingIndicator = document.getElementById("loading");
-loadingIndicator.style.display = "block"; // Show loading
-
 loader.load(
-  "assets/3D Models/konark_optimised_13mb.glb",
+  "assets/3D Models/konark_texture_reprojected_8k_8.glb",
   (gltf) => {
     const model = gltf.scene;
     scene.add(model);
@@ -74,7 +72,7 @@ loader.load(
 const rgbeLoader = new THREE.RGBELoader();
 rgbeLoader.setDataType(THREE.FloatType);
 rgbeLoader.load(
-  "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/4k/kloofendal_48d_partly_cloudy_puresky_4k.hdr",
+  "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
   (texture) => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
     scene.environment = texture;
