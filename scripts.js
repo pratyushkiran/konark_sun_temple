@@ -113,6 +113,13 @@ directionalLight.shadow.camera.bottom = -20;
 directionalLight.shadow.bias = -0.0001; // Reduce shadow artifacts
 scene.add(directionalLight);
 
+// Add linear fog
+scene.fog = new THREE.Fog(
+  0x8f909e, // Fog color (light gray in this example)
+  30, // Near distance (where fog starts)
+  80 // Far distance (where fog fully obscures objects)
+);
+
 // Orbit Controls Configuration
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true; // Smooth camera movement
