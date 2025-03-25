@@ -21,14 +21,14 @@ document.getElementById("threejs-container").appendChild(renderer.domElement);
 const clock = new THREE.Clock();
 
 // Draco Loader Configuration (unchanged)
-const dracoLoader = new THREE.DRACOLoader();
-dracoLoader.setDecoderPath(
-  "https://cdn.jsdelivr.net/npm/three@0.134/examples/js/libs/draco/"
-);
+// const dracoLoader = new THREE.DRACOLoader();
+// dracoLoader.setDecoderPath(
+//   "https://cdn.jsdelivr.net/npm/three@0.134/examples/js/libs/draco/"
+// );
 
 // GLTF Loader Configuration (unchanged)
 const loader = new THREE.GLTFLoader();
-loader.setDRACOLoader(dracoLoader);
+// loader.setDRACOLoader(dracoLoader);
 const loadingIndicator = document.getElementById("loading");
 loadingIndicator.style.display = "block";
 
@@ -49,7 +49,7 @@ loader.load(
     const size = box.getSize(new THREE.Vector3());
     templeModel.position.sub(center);
     templeModel.scale.set(1, 1, 1);
-    templeModel.position.set(0, -1, 0);
+    templeModel.position.set(0, 0, 0);
 
     // Configure mesh properties
     templeModel.traverse((child) => {
@@ -78,13 +78,12 @@ loader.load(
 // Load Animated Birds Model
 let birdsModel;
 loader.load(
-  "assets/3D Models/konark-sun-temple_animated.glb",
+  "assets/3D Models/konark-sun-temple_animated1.glb",
   (gltf) => {
     birdsModel = gltf.scene;
     scene.add(birdsModel);
-
     // Position birds relative to temple (adjust as needed)
-    birdsModel.position.set(0, 5, 0); // Example: birds slightly above temple
+    birdsModel.position.set(0, 1, 0); // Example: birds slightly above temple
 
     // Configure mesh properties
     birdsModel.traverse((child) => {
@@ -130,7 +129,8 @@ loader.load(
 const rgbeLoader = new THREE.RGBELoader();
 rgbeLoader.setDataType(THREE.FloatType);
 rgbeLoader.load(
-  "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
+  "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/belfast_sunset_puresky_1k.hdr",
+  // "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
   (texture) => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
     scene.environment = texture;
@@ -160,7 +160,7 @@ directionalLight.shadow.bias = -0.0001;
 scene.add(directionalLight);
 
 // Add linear fog (unchanged)
-scene.fog = new THREE.Fog(0x8f909e, 40, 90);
+scene.fog = new THREE.Fog(0x78778a, 40, 110);
 
 // Orbit Controls Configuration (unchanged)
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
