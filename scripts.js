@@ -1,4 +1,4 @@
-// Core Three.js Setup (unchanged)
+// Core Three.js Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -20,20 +20,24 @@ document.getElementById("threejs-container").appendChild(renderer.domElement);
 
 const clock = new THREE.Clock();
 
-// Draco Loader Configuration (unchanged)
-// const dracoLoader = new THREE.DRACOLoader();
-// dracoLoader.setDecoderPath(
-//   "https://cdn.jsdelivr.net/npm/three@0.134/examples/js/libs/draco/"
-// );
-
-// GLTF Loader Configuration (unchanged)
 const loader = new THREE.GLTFLoader();
-// loader.setDRACOLoader(dracoLoader);
-const loadingIndicator = document.getElementById("loading");
-loadingIndicator.style.display = "block";
+const loadingContainer = document.getElementById("loading-container");
+const threejsContainer = document.getElementById("threejs-container");
+
+// Track loading status
+let templeLoaded = false;
+let birdsLoaded = false;
 
 // Animation Mixer Variable
-let mixer; // For bird animations
+let mixer;
+
+// Function to check if both models are loaded
+function checkLoadingComplete() {
+  if (templeLoaded && birdsLoaded) {
+    loadingContainer.style.display = "none"; // Hide loading wheel
+    threejsContainer.classList.add("loaded"); // Show Three.js container
+  }
+}
 
 // Load Static Temple Model
 let templeModel;
@@ -43,15 +47,12 @@ loader.load(
     templeModel = gltf.scene;
     scene.add(templeModel);
 
-    // Center and scale temple
     const box = new THREE.Box3().setFromObject(templeModel);
     const center = box.getCenter(new THREE.Vector3());
-    const size = box.getSize(new THREE.Vector3());
     templeModel.position.sub(center);
     templeModel.scale.set(1, 1, 1);
     templeModel.position.set(0, 0, 0);
 
-    // Configure mesh properties
     templeModel.traverse((child) => {
       if (child.isMesh) {
         child.castShadow = true;
@@ -61,6 +62,9 @@ loader.load(
         child.material.needsUpdate = true;
       }
     });
+
+    templeLoaded = true;
+    checkLoadingComplete();
   },
   (progress) => {
     console.log(
@@ -71,7 +75,6 @@ loader.load(
   },
   (error) => {
     console.error("Temple loading failed:", error);
-    loadingIndicator.textContent = "Error loading temple";
   }
 );
 
@@ -82,13 +85,11 @@ loader.load(
   (gltf) => {
     birdsModel = gltf.scene;
     scene.add(birdsModel);
-    // Position birds relative to temple (adjust as needed)
-    birdsModel.position.set(0, 1, 0); // Example: birds slightly above temple
+    birdsModel.position.set(0, 1, 0);
 
-    // Configure mesh properties
     birdsModel.traverse((child) => {
       if (child.isMesh) {
-        child.frustumCulled = false; // Disable culling for testing
+        child.frustumCulled = false;
         child.castShadow = true;
         child.receiveShadow = true;
         child.material.envMap = scene.environment;
@@ -97,7 +98,6 @@ loader.load(
       }
     });
 
-    // Set up Animation Mixer and Play Animations
     mixer = new THREE.AnimationMixer(birdsModel);
     const animations = gltf.animations;
     if (animations && animations.length > 0) {
@@ -109,7 +109,8 @@ loader.load(
       console.log("No animations found in birds_animated.glb.");
     }
 
-    loadingIndicator.style.display = "none"; // Hide when both models are loaded
+    birdsLoaded = true;
+    checkLoadingComplete();
   },
   (progress) => {
     console.log(
@@ -121,16 +122,14 @@ loader.load(
   },
   (error) => {
     console.error("Birds loading failed:", error);
-    loadingIndicator.textContent = "Error loading birds";
   }
 );
 
-// HDRI Environment Setup (unchanged)
+// HDRI Environment Setup
 const rgbeLoader = new THREE.RGBELoader();
 rgbeLoader.setDataType(THREE.FloatType);
 rgbeLoader.load(
   "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/belfast_sunset_puresky_1k.hdr",
-  // "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
   (texture) => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
     scene.environment = texture;
@@ -142,7 +141,7 @@ rgbeLoader.load(
   }
 );
 
-// Lighting Setup (unchanged)
+// Lighting Setup
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
@@ -159,10 +158,10 @@ directionalLight.shadow.camera.bottom = -20;
 directionalLight.shadow.bias = -0.0001;
 scene.add(directionalLight);
 
-// Add linear fog (unchanged)
+// Add linear fog
 scene.fog = new THREE.Fog(0x78778a, 40, 110);
 
-// Orbit Controls Configuration (unchanged)
+// Orbit Controls Configuration
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
@@ -171,7 +170,7 @@ controls.maxDistance = 50;
 controls.minPolarAngle = Math.PI / 12;
 controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12;
 
-// Animation Loop (unchanged)
+// Animation Loop
 function animate() {
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
@@ -183,14 +182,14 @@ function animate() {
 }
 animate();
 
-// Window Resize Handler (unchanged)
+// Window Resize Handler
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Camera View Transition Function (unchanged)
+// Camera View Transition Function
 function setCameraView(position, target) {
   gsap.to(camera.position, {
     x: position.x,
@@ -207,7 +206,7 @@ function setCameraView(position, target) {
   controls.autoRotate = false;
 }
 
-// Button Event Listeners (unchanged)
+// Button Event Listeners
 const maxDim = 14;
 document.getElementById("wheelView").addEventListener("click", () => {
   setCameraView(

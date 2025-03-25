@@ -35,6 +35,42 @@ button:hover {
   background-color: #555;
 }
 
+/* Center the loader on the screen */
+#loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000; /* Black background during loading */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it’s on top */
+}
+
+#loading-wheel {
+  width: 200px; /* Adjust size as needed */
+  height: 200px;
+  animation: spin 8s linear infinite; /* Rotation animation */
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hide Three.js container until loading is complete */
+#threejs-container {
+  display: none;
+}
+
+/* Show it when loaded */
+#threejs-container.loaded {
+  display: block;
+}
+
 /* Three.js Container */
 #threejs-container {
   width: 100vw;
