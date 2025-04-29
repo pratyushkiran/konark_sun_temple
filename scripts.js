@@ -3,6 +3,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import WebGL from 'three/addons/capabilities/WebGL.js';
+
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -311,7 +313,12 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.4; // Reduced exposure (default was 1.0)
 renderer.outputEncoding = THREE.sRGBEncoding;
-document.querySelector("#threejs-container").append(renderer.domElement)
+
+if(WebGL.isWebGL2Available() === true ) {
+  document.querySelector("#threejs-container").append(renderer.domElement)
+} else {
+  document.querySelector('#threejs-container').append( WebGL.getWebGL2ErrorMessage() );
+}
 
 const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => {
@@ -323,6 +330,7 @@ renderer.setAnimationLoop(() => {
   controls.update();
   controls.autoRotate = true;
   controls.autoRotateSpeed = 0.1;
+
   renderer.render(scene, camera);
 })
 //#endregion
