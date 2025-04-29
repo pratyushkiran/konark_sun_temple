@@ -214,11 +214,24 @@ const hotspots = [
 ];
 
 function createHotspot(position, name) {
-  // Create a sprite for the hotspot
+  // Create a canvas
   const canvas = document.createElement("canvas");
-  canvas.width = 256;
-  canvas.height = 128;
   const context = canvas.getContext("2d");
+
+  // Set initial font for measurement
+  context.font = "bold 45px Calibri";
+  const textMetrics = context.measureText(name);
+  const textWidth = textMetrics.width;
+  const textHeight = 45; // Approximate height of the font
+
+  // Calculate canvas size with padding
+  const padding = 40; // Padding around the text
+  canvas.width = Math.ceil(textWidth) + padding * 2; // Width based on text + padding
+  canvas.height = textHeight + padding * 2; // Height based on font size + padding
+
+  // Redraw with the new canvas size
+  context.font = "bold 45px Calibri"; // Reapply font after resizing
+  context.textAlign = "center";
 
   // Draw rounded rectangle
   const cornerRadius = 25;
@@ -248,18 +261,21 @@ function createHotspot(position, name) {
   context.fillStyle = "rgba(0, 0, 0, 0.7)";
   context.fill();
 
-  // Draw bold text
-  context.textAlign = "center";
-
+  // Draw text
   context.fillStyle = "white";
-  context.font = "bold 45px Calibri";
-  context.fillText(name, 128, 80);
+  context.fillText(name, canvas.width / 2, canvas.height / 2 + textHeight / 2);
 
+  // Create sprite
   const texture = new THREE.CanvasTexture(canvas);
   const material = new THREE.SpriteMaterial({ map: texture });
   const sprite = new THREE.Sprite(material);
   sprite.position.copy(position);
-  sprite.scale.set(4, 2, 1);
+
+  // Adjust sprite scale to maintain consistent visual size
+  const baseWidth = 256; // Reference width for scaling
+  const scaleFactor = canvas.width / baseWidth;
+  sprite.scale.set(4 * scaleFactor, 2 * (canvas.height / 128), 1);
+
   sprite.userData = { name };
   scene.add(sprite);
   return sprite;
