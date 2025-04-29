@@ -3,6 +3,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import WebGL from "three/addons/capabilities/WebGL.js";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -162,19 +163,19 @@ scene.fog = new THREE.Fog(0x625653, 50, 110);
 //#region hotspot annotation
 const hotspots = [
   {
-    name: "Front Gate",
-    position: new THREE.Vector3(5, 6, 9), // Adjust based on model
+    name: "JagaMohana",
+    position: new THREE.Vector3(5, 10, 9), // Adjust based on model
     info: {
-      title: "Front Gate",
+      title: "JagaMohana",
       content:
-        "The main entrance of the Konark Sun Temple, intricately carved with motifs of lions, elephants, and floral patterns. It leads to the main sanctum.",
+        "The main entrance to the temple, adorned with intricate carvings and sculptures. It serves as a grand entry point to the temple complex. The JagaMohana is the assembly hall of the temple, where devotees would gather for rituals and ceremonies. It is characterized by its ornate architecture and detailed stone carvings.",
     },
   },
   {
-    name: "Back Gate",
-    position: new THREE.Vector3(-4, 13, -9), // Adjust based on model
+    name: "Back View",
+    position: new THREE.Vector3(-4, 15, -9), // Adjust based on model
     info: {
-      title: "Back Gate",
+      title: "Back View",
       content:
         "The rear entrance, less ornate but still significant, providing access to the temple's rear sections and surrounding structures.",
     },
@@ -276,10 +277,10 @@ function showInfoPanel(info) {
   document.getElementById("info-content").textContent = info.content;
   infoPanel.style.display = "block";
 
-  if (info.title === "Front Gate") {
+  if (info.title === "JagaMohana") {
     setCameraView(new THREE.Vector3(2, 15, 26), new THREE.Vector3(0, 0, 0));
   }
-  if (info.title === "Back Gate") {
+  if (info.title === "Back View") {
     setCameraView(new THREE.Vector3(-8, 20, -26), new THREE.Vector3(0, 0, 0));
   }
   if (info.title === "Wheel") {
@@ -309,7 +310,14 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.4; // Reduced exposure (default was 1.0)
 renderer.outputEncoding = THREE.sRGBEncoding;
-document.querySelector("#threejs-container").append(renderer.domElement);
+
+if (WebGL.isWebGL2Available()) {
+  document.querySelector("#threejs-container").append(renderer.domElement);
+} else {
+  document
+    .querySelector("#threejs-container")
+    .append(WebGL.getWebGL2ErrorMessage());
+}
 
 const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => {
