@@ -1,3 +1,9 @@
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -7,23 +13,9 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.set(15, 15, 30);
 
-const renderer = new THREE.WebGLRenderer({
-  antialias: true,
-  physicallyCorrectLights: true,
-});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.6;
-renderer.outputEncoding = THREE.sRGBEncoding;
-document.getElementById("threejs-container").appendChild(renderer.domElement);
-
-const clock = new THREE.Clock();
-
-// Initialize GLTFLoader and DracoLoader
-const loader = new THREE.GLTFLoader();
-const dracoLoader = new THREE.DRACOLoader();
+//#region Loaders & Models
+const loader = new GLTFLoader();
+const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath(
   "https://www.gstatic.com/draco/versioned/decoders/1.5.6/"
 );
@@ -33,27 +25,14 @@ loader.setDRACOLoader(dracoLoader);
 const loadingContainer = document.getElementById("loading-container");
 const threejsContainer = document.getElementById("threejs-container");
 
-// Track loading status
-let templeLoaded = false;
-let birdsLoaded = false;
+const models = [];
+let mixer; // for birds animation
 
-// Animation Mixer Variable
-let mixer;
-
-// Function to check if both models are loaded
-function checkLoadingComplete() {
-  if (templeLoaded && birdsLoaded) {
-    loadingContainer.style.display = "none";
-    threejsContainer.classList.add("loaded");
-  }
-}
-
-// Load Static Temple Model
-let templeModel;
+// Temple Model
 loader.load(
   "assets/3D Models/konark_optimised_13mb.glb",
   (gltf) => {
-    templeModel = gltf.scene;
+    let templeModel = gltf.scene;
     scene.add(templeModel);
 
     const box = new THREE.Box3().setFromObject(templeModel);
@@ -72,27 +51,25 @@ loader.load(
       }
     });
 
-    templeLoaded = true;
+    models.push({
+      name: "Temple",
+      model: templeModel,
+      isLoaded: true,
+    });
+
     checkLoadingComplete();
   },
-  (progress) => {
-    // console.log(
-    //   `Loading temple: ${((progress.loaded / progress.total) * 100).toFixed(
-    //     2
-    //   )}%`
-    // );
-  },
+  undefined,
   (error) => {
     console.error("Temple loading failed:", error);
   }
 );
 
-// Load Animated Birds Model
-let birdsModel;
+// Bird
 loader.load(
   "assets/3D Models/konark-sun-temple_animated1.glb",
   (gltf) => {
-    birdsModel = gltf.scene;
+    let birdsModel = gltf.scene;
     scene.add(birdsModel);
     birdsModel.position.set(0, 1, 0);
 
@@ -118,24 +95,38 @@ loader.load(
       console.log("No animations found in birds_animated.glb.");
     }
 
-    birdsLoaded = true;
-    checkLoadingComplete();
+    models.push({ 
+      name: "Bird", 
+      model: birdsModel, 
+      isLoaded: true 
+    });
+
   },
-  (progress) => {
-    console.log(
-      `Loading birds Model: ${(
-        (progress.loaded / progress.total) *
-        100
-      ).toFixed(2)}%`
-    );
-  },
+  undefined,
   (error) => {
     console.error("Birds loading failed:", error);
   }
 );
 
-// HDRI Environment Setup
-const rgbeLoader = new THREE.RGBELoader();
+// Function to check if models are loaded or not
+function checkLoadingComplete() {
+  let isEverythingLoaded = true;
+
+  models.forEach(model => {
+    if(!model.isLoaded)
+      isEverythingLoaded = false;
+  })
+
+  if (isEverythingLoaded && models.length == 2) {
+    loadingContainer.style.display = "none";
+    threejsContainer.classList.add("loaded");
+  }
+}
+
+//#endregion
+
+//#region HDRI, Lighting & Fog Setup
+const rgbeLoader = new RGBELoader();
 rgbeLoader.setDataType(THREE.FloatType);
 rgbeLoader.load(
   "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/syferfontein_1d_clear_puresky_2k.hdr",
@@ -150,7 +141,6 @@ rgbeLoader.load(
   }
 );
 
-// Lighting Setup
 const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
 
@@ -166,40 +156,54 @@ const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight2.position.set(-10, 10, -12);
 scene.add(directionalLight2);
 
-// Add linear fog
-scene.fog = new THREE.Fog(0x625653, 50, 110);
+scene.fog = new THREE.Fog(0x625653, 50, 110); // Add linear fog
 
-// Orbit Controls Configuration
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.minDistance = 20;
-controls.maxDistance = 50;
-controls.minPolarAngle = Math.PI / 12;
-controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12;
+//#endregion
 
-// Animation Loop
-function animate() {
-  requestAnimationFrame(animate);
+//#region Renderer & Animation
+const clock = new THREE.Clock();
+const renderer = new THREE.WebGLRenderer({
+  antialias: true,
+  physicallyCorrectLights: true,
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.6;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.setAnimationLoop(() => {
   const delta = clock.getDelta();
-  if (mixer) mixer.update(delta);
+
+  if (mixer) 
+    mixer.update(delta);
+
   controls.update();
   controls.autoRotate = true;
   controls.autoRotateSpeed = 0.1;
   renderer.render(scene, camera);
-}
+});
+document.getElementById("threejs-container").appendChild(renderer.domElement);
+//#endregion
 
-// Initialize everything
-animate();
+//#region Orbit controls & Resize
+const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.minDistance = 20;
+  controls.maxDistance = 50;
+  controls.minPolarAngle = Math.PI / 12;
+  controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12;
 
-// Window Resize Handler
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+//#endregion
 
-// Camera View Transition Function
+//#region Button Events & Camera View Transition Function
 function setCameraView(position, target) {
   gsap.to(camera.position, {
     x: position.x,
@@ -216,7 +220,6 @@ function setCameraView(position, target) {
   controls.autoRotate = false;
 }
 
-// Button Event Listeners
 const maxDim = 14;
 document.getElementById("wheelView").addEventListener("click", () => {
   setCameraView(
@@ -245,3 +248,4 @@ document.getElementById("sideView").addEventListener("click", () => {
     new THREE.Vector3(0, 0, 0)
   );
 });
+//#endregion
