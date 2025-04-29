@@ -178,6 +178,61 @@ controls.maxDistance = 50;
 controls.minPolarAngle = Math.PI / 12;
 controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12;
 
+// hotspot annotation
+
+const hotspots = [
+  {
+    name: "Front Gate",
+    position: new THREE.Vector3(4, 6, 9), // Adjust based on model
+    info: {
+      title: "Front Gate",
+      content:
+        "The main entrance of the Konark Sun Temple, intricately carved with motifs of lions, elephants, and floral patterns. It leads to the main sanctum.",
+    },
+  },
+  {
+    name: "Back Gate",
+    position: new THREE.Vector3(-4, 13, -9), // Adjust based on model
+    info: {
+      title: "Back Gate",
+      content:
+        "The rear entrance, less ornate but still significant, providing access to the temple's rear sections and surrounding structures.",
+    },
+  },
+];
+
+function createHotspot(position, name) {
+  // Create a sprite for the hotspot
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 128;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "rgba(0, 0, 0, 0.7)";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "white";
+
+  context.font = "40px Arial";
+  context.textAlign = "center";
+  context.fillText(name, 128, 80);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const material = new THREE.SpriteMaterial({ map: texture });
+  const sprite = new THREE.Sprite(material);
+  sprite.position.copy(position);
+  sprite.scale.set(2, 1, 1);
+  sprite.userData = { name };
+  scene.add(sprite);
+  return sprite;
+}
+
+const hotspotSprites = hotspots.map((hotspot) =>
+  createHotspot(hotspot.position, hotspot.name)
+);
+
+// Raycaster for hotspot interaction
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
 // Animation Loop
 function animate() {
   requestAnimationFrame(animate);
@@ -188,6 +243,42 @@ function animate() {
   controls.autoRotateSpeed = 0.1;
   renderer.render(scene, camera);
 }
+
+function onMouseClick(event) {
+  event.preventDefault();
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(hotspotSprites);
+
+  if (intersects.length > 0) {
+    const hotspot = intersects[0].object;
+    const hotspotData = hotspots.find((h) => h.name === hotspot.userData.name);
+    if (hotspotData) {
+      showInfoPanel(hotspotData.info);
+    }
+  }
+}
+
+window.addEventListener("click", onMouseClick);
+
+// Info Panel Functions
+function showInfoPanel(info) {
+  const infoPanel = document.getElementById("info-panel");
+  document.getElementById("info-title").textContent = info.title;
+  document.getElementById("info-content").textContent = info.content;
+  infoPanel.style.display = "block";
+}
+
+function closeInfoPanel() {
+  document.getElementById("info-panel").style.display = "none";
+}
+
+//  event listener to close button
+document
+  .querySelector("#info-panel .close-btn")
+  .addEventListener("click", closeInfoPanel);
 
 // Initialize everything
 animate();
