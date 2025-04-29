@@ -183,7 +183,7 @@ controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12;
 const hotspots = [
   {
     name: "Front Gate",
-    position: new THREE.Vector3(4, 6, 9), // Adjust based on model
+    position: new THREE.Vector3(5, 6, 9), // Adjust based on model
     info: {
       title: "Front Gate",
       content:
@@ -199,6 +199,15 @@ const hotspots = [
         "The rear entrance, less ornate but still significant, providing access to the temple's rear sections and surrounding structures.",
     },
   },
+  {
+    name: "Wheel",
+    position: new THREE.Vector3(-12, 2, 8), // Adjust based on model
+    info: {
+      title: "Wheel",
+      content:
+        "The wheels of the Konark Sun Temple, also called chakras, are not only symbolic but also function as sandhyals. There are 24 intricately carved stone wheels which represent the hours of the day. These wheels can be used to tell time by observing the shadows cast by the spokes of the wheel as the sun moves across the sky.",
+    },
+  },
 ];
 
 function createHotspot(position, name) {
@@ -207,19 +216,47 @@ function createHotspot(position, name) {
   canvas.width = 256;
   canvas.height = 128;
   const context = canvas.getContext("2d");
-  context.fillStyle = "rgba(0, 0, 0, 0.7)";
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "white";
 
-  context.font = "40px Arial";
+  // Draw rounded rectangle
+  const cornerRadius = 25;
+  context.beginPath();
+  context.moveTo(cornerRadius, 0);
+  context.lineTo(canvas.width - cornerRadius, 0);
+  context.arcTo(canvas.width, 0, canvas.width, cornerRadius, cornerRadius);
+  context.lineTo(canvas.width, canvas.height - cornerRadius);
+  context.arcTo(
+    canvas.width,
+    canvas.height,
+    canvas.width - cornerRadius,
+    canvas.height,
+    cornerRadius
+  );
+  context.lineTo(cornerRadius, canvas.height);
+  context.arcTo(
+    0,
+    canvas.height,
+    0,
+    canvas.height - cornerRadius,
+    cornerRadius
+  );
+  context.lineTo(0, cornerRadius);
+  context.arcTo(0, 0, cornerRadius, 0, cornerRadius);
+  context.closePath();
+  context.fillStyle = "rgba(0, 0, 0, 0.7)";
+  context.fill();
+
+  // Draw bold text
   context.textAlign = "center";
+
+  context.fillStyle = "white";
+  context.font = "bold 45px Calibri";
   context.fillText(name, 128, 80);
 
   const texture = new THREE.CanvasTexture(canvas);
   const material = new THREE.SpriteMaterial({ map: texture });
   const sprite = new THREE.Sprite(material);
   sprite.position.copy(position);
-  sprite.scale.set(2, 1, 1);
+  sprite.scale.set(4, 2, 1);
   sprite.userData = { name };
   scene.add(sprite);
   return sprite;
@@ -269,6 +306,16 @@ function showInfoPanel(info) {
   document.getElementById("info-title").textContent = info.title;
   document.getElementById("info-content").textContent = info.content;
   infoPanel.style.display = "block";
+
+  if (info.title === "Front Gate") {
+    setCameraView(new THREE.Vector3(2, 15, 26), new THREE.Vector3(0, 0, 0));
+  }
+  if (info.title === "Back Gate") {
+    setCameraView(new THREE.Vector3(-8, 20, -26), new THREE.Vector3(0, 0, 0));
+  }
+  if (info.title === "Wheel") {
+    setCameraView(new THREE.Vector3(-10, 0, 12), new THREE.Vector3(0, 0, 0));
+  }
 }
 
 function closeInfoPanel() {
@@ -309,12 +356,9 @@ function setCameraView(position, target) {
 
 // Button Event Listeners
 const maxDim = 14;
-document.getElementById("wheelView").addEventListener("click", () => {
-  setCameraView(
-    new THREE.Vector3(0, maxDim * 0.5, maxDim * 1.2),
-    new THREE.Vector3(0, 0, 0)
-  );
-});
+// document.getElementById("wheelView").addEventListener("click", () => {
+//   setCameraView(new THREE.Vector3(-7, 5, 7), new THREE.Vector3(0, 0, 0));
+// });
 
 document.getElementById("topView").addEventListener("click", () => {
   setCameraView(
@@ -325,7 +369,7 @@ document.getElementById("topView").addEventListener("click", () => {
 
 document.getElementById("frontView").addEventListener("click", () => {
   setCameraView(
-    new THREE.Vector3(0, maxDim * 0.8, maxDim * 2),
+    new THREE.Vector3(0, maxDim * 0.8, maxDim * 3),
     new THREE.Vector3(0, 0, 0)
   );
 });
