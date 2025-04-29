@@ -1,8 +1,8 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -95,12 +95,11 @@ loader.load(
       console.log("No animations found in birds_animated.glb.");
     }
 
-    models.push({ 
-      name: "Bird", 
-      model: birdsModel, 
-      isLoaded: true 
+    models.push({
+      name: "Bird",
+      model: birdsModel,
+      isLoaded: true,
     });
-
   },
   undefined,
   (error) => {
@@ -112,10 +111,9 @@ loader.load(
 function checkLoadingComplete() {
   let isEverythingLoaded = true;
 
-  models.forEach(model => {
-    if(!model.isLoaded)
-      isEverythingLoaded = false;
-  })
+  models.forEach((model) => {
+    if (!model.isLoaded) isEverythingLoaded = false;
+  });
 
   if (isEverythingLoaded && models.length == 2) {
     loadingContainer.style.display = "none";
@@ -183,7 +181,7 @@ const hotspots = [
   },
   {
     name: "Wheel",
-    position: new THREE.Vector3(-12, 2, 8), // Adjust based on model
+    position: new THREE.Vector3(12, 2, 5), // Adjust based on model
     info: {
       title: "Wheel",
       content:
@@ -285,7 +283,7 @@ function showInfoPanel(info) {
     setCameraView(new THREE.Vector3(-8, 20, -26), new THREE.Vector3(0, 0, 0));
   }
   if (info.title === "Wheel") {
-    setCameraView(new THREE.Vector3(-10, 0, 12), new THREE.Vector3(0, 0, 0));
+    setCameraView(new THREE.Vector3(10, 0, 10), new THREE.Vector3(3, 0, 3));
   }
 }
 
@@ -311,20 +309,19 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.4; // Reduced exposure (default was 1.0)
 renderer.outputEncoding = THREE.sRGBEncoding;
-document.querySelector("#threejs-container").append(renderer.domElement)
+document.querySelector("#threejs-container").append(renderer.domElement);
 
 const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => {
   const delta = clock.getDelta();
 
-  if (mixer) 
-    mixer.update(delta);
+  if (mixer) mixer.update(delta);
 
   controls.update();
   controls.autoRotate = true;
   controls.autoRotateSpeed = 0.1;
   renderer.render(scene, camera);
-})
+});
 //#endregion
 
 //#region Orbit Controls & Resize Handler
