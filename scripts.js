@@ -9,7 +9,7 @@ const enums = {
   JAGAMOHANA: "JagaMohana",
   BACK_VIEW: "Back View",
   WHEEL: "Wheel",
-  SEVEN_HORSES: "Seven Horses",
+  SEVEN_HORSES: "Seven Horses of Konark Temple",
 };
 
 const scene = new THREE.Scene();
@@ -254,15 +254,31 @@ function createHotspot(position, name) {
   context.fillText(name, canvas.width / 2, canvas.height / 2 + textHeight / 3);
 
   const texture = new THREE.CanvasTexture(canvas);
-  const material = new THREE.SpriteMaterial({ map: texture });
+  const material = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+  });
   const sprite = new THREE.Sprite(material);
   sprite.position.copy(position);
 
   const baseWidth = 256;
   const scaleFactor = canvas.width / baseWidth;
-  sprite.scale.set(4 * scaleFactor, 2 * (canvas.height / 128), 1);
+  const originalScale = new THREE.Vector3(
+    4 * scaleFactor,
+    2 * (canvas.height / 128),
+    1
+  );
+  sprite.scale.copy(originalScale);
 
-  sprite.userData = { name };
+  sprite.userData = {
+    name,
+    originalScale,
+    hoverScale: new THREE.Vector3(
+      originalScale.x * 1.1,
+      originalScale.y * 1.1,
+      originalScale.z
+    ),
+  };
   scene.add(sprite);
   return sprite;
 }
@@ -273,6 +289,71 @@ const hotspotSprites = hotspots.map((hotspot) =>
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+let lastHoveredSprite = null;
+
+function onMouseMove(event) {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(hotspotSprites);
+
+  if (intersects.length > 0) {
+    const sprite = intersects[0].object;
+    if (sprite !== lastHoveredSprite) {
+      // Restore previous sprite if any
+      if (lastHoveredSprite) {
+        gsap.to(lastHoveredSprite.scale, {
+          x: lastHoveredSprite.userData.originalScale.x,
+          y: lastHoveredSprite.userData.originalScale.y,
+          z: lastHoveredSprite.userData.originalScale.z,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+        gsap.to(lastHoveredSprite.material, {
+          opacity: 1.0,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      }
+      // Apply hover effect
+      gsap.to(sprite.scale, {
+        x: sprite.userData.hoverScale.x,
+        y: sprite.userData.hoverScale.y,
+        z: sprite.userData.hoverScale.z,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+      gsap.to(sprite.material, {
+        opacity: 0.9,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+      lastHoveredSprite = sprite;
+      document.body.style.cursor = "pointer";
+    }
+  } else {
+    // Restore last hovered sprite if any
+    if (lastHoveredSprite) {
+      gsap.to(lastHoveredSprite.scale, {
+        x: lastHoveredSprite.userData.originalScale.x,
+        y: lastHoveredSprite.userData.originalScale.y,
+        z: lastHoveredSprite.userData.originalScale.z,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+      gsap.to(lastHoveredSprite.material, {
+        opacity: 1.0,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+      lastHoveredSprite = null;
+      document.body.style.cursor = "default";
+    }
+  }
+}
+
+window.addEventListener("mousemove", onMouseMove);
 
 function onMouseClick(event) {
   const infoPanel = document.getElementById("info-panel");
@@ -285,18 +366,17 @@ function onMouseClick(event) {
   const intersects = raycaster.intersectObjects(hotspotSprites);
 
   if (intersects.length > 0) {
-    event.preventDefault(); // Prevent OrbitControls from handling hotspot clicks
+    event.preventDefault();
     const hotspot = intersects[0].object;
     const hotspotData = hotspots.find((h) => h.name === hotspot.userData.name);
     if (hotspotData) {
       showInfoPanel(hotspotData.info);
     }
   } else if (isInfoPanelOpen) {
-    event.preventDefault(); // Prevent OrbitControls when closing info panel
+    event.preventDefault();
     closeInfoPanel();
     setDefaultCameraView();
   }
-  // If info panel is not open and no hotspot is clicked, do nothing, allowing OrbitControls to handle panning
 }
 
 window.addEventListener("click", onMouseClick);
@@ -306,8 +386,24 @@ function showInfoPanel(info) {
   document.getElementById("info-title").textContent = info.title;
   document.getElementById("info-image").src = info.src;
   document.getElementById("info-content").textContent = info.content;
-  infoPanel.style.display = "block";
 
+  // Animate info panel opening
+  infoPanel.style.display = "block";
+  gsap.fromTo(
+    infoPanel,
+    {
+      opacity: 0,
+      x: 100, // Slide in from right
+    },
+    {
+      opacity: 1,
+      x: 0,
+      duration: 0.5,
+      ease: "power2.out",
+    }
+  );
+
+  // Updated camera positions (placeholders; replace with your specific values)
   if (info.title === "JagaMohana") {
     setCameraView(new THREE.Vector3(2, 15, 26), new THREE.Vector3(0, 0, 0));
   }
@@ -323,7 +419,17 @@ function showInfoPanel(info) {
 }
 
 function closeInfoPanel() {
-  document.getElementById("info-panel").style.display = "none";
+  const infoPanel = document.getElementById("info-panel");
+  // Animate info panel closing
+  gsap.to(infoPanel, {
+    opacity: 0,
+    x: 100, // Slide out to right
+    duration: 0.5,
+    ease: "power2.in",
+    onComplete: () => {
+      infoPanel.style.display = "none";
+    },
+  });
 }
 
 function setDefaultCameraView() {
