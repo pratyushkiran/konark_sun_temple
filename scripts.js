@@ -203,7 +203,7 @@ const hotspots = [
   },
   {
     name: "Seven Horses of Konark Temple",
-    position: new THREE.Vector3(-3, 0.9, 18.7), // Adjust based on model
+    position: new THREE.Vector3(-3, 2, 20.7), // Adjust based on model
     info: {
       title: "Seven Horses of Konark Temple",
       src: "assets/Images/seven-horses.jpg",
@@ -225,7 +225,7 @@ function createHotspot(position, name) {
   const textHeight = 45; // Approximate height of the font
 
   // Calculate canvas size with padding
-  const padding = 40; // Padding around the text
+  const padding = 20; // Padding around the text
   canvas.width = Math.ceil(textWidth) + padding * 2; // Width based on text + padding
   canvas.height = textHeight + padding * 2; // Height based on font size + padding
 
@@ -263,7 +263,7 @@ function createHotspot(position, name) {
 
   // Draw text
   context.fillStyle = "white";
-  context.fillText(name, canvas.width / 2, canvas.height / 2 + textHeight / 2);
+  context.fillText(name, canvas.width / 2, canvas.height / 2 + textHeight / 3);
 
   // Create sprite
   const texture = new THREE.CanvasTexture(canvas);
@@ -316,6 +316,7 @@ function showInfoPanel(info) {
   document.getElementById("info-content").textContent = info.content;
   infoPanel.style.display = "block";
 
+  // set camera view based on the hotspot clicked
   if (info.title === "JagaMohana") {
     setCameraView(new THREE.Vector3(2, 15, 26), new THREE.Vector3(0, 0, 0));
   }
@@ -324,6 +325,9 @@ function showInfoPanel(info) {
   }
   if (info.title === "Wheel") {
     setCameraView(new THREE.Vector3(10, 0, 10), new THREE.Vector3(3, 0, 3));
+  }
+  if (info.title === "Seven Horses of Konark Temple") {
+    setCameraView(new THREE.Vector3(-3, 2, 18.7), new THREE.Vector3(0, 0, 16));
   }
 }
 
