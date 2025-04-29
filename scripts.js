@@ -5,6 +5,13 @@ import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import WebGL from "three/addons/capabilities/WebGL.js";
 
+const enums = {
+  JAGAMOHANA: "JagaMohana",
+  BACK_VIEW: "Back View",
+  WHEEL: "Wheel",
+  SEVEN_HORSES: "Seven Horses of Konark Temple",
+};
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -167,6 +174,8 @@ const hotspots = [
     position: new THREE.Vector3(5, 10, 9), // Adjust based on model
     info: {
       title: "JagaMohana",
+      src: "assets/Images/1.jpg",
+
       content:
         "The main entrance to the temple, adorned with intricate carvings and sculptures. It serves as a grand entry point to the temple complex. The JagaMohana is the assembly hall of the temple, where devotees would gather for rituals and ceremonies. It is characterized by its ornate architecture and detailed stone carvings.",
     },
@@ -176,6 +185,8 @@ const hotspots = [
     position: new THREE.Vector3(-4, 15, -9), // Adjust based on model
     info: {
       title: "Back View",
+      src: "assets/Images/1.jpg",
+
       content:
         "The rear entrance, less ornate but still significant, providing access to the temple's rear sections and surrounding structures.",
     },
@@ -185,6 +196,17 @@ const hotspots = [
     position: new THREE.Vector3(12, 2, 5), // Adjust based on model
     info: {
       title: "Wheel",
+      src: "assets/Images/2.png",
+      content:
+        "The wheels of the Konark Sun Temple, also called chakras, are not only symbolic but also function as sandhyals. There are 24 intricately carved stone wheels which represent the hours of the day. These wheels can be used to tell time by observing the shadows cast by the spokes of the wheel as the sun moves across the sky.",
+    },
+  },
+  {
+    name: "Seven Horses of Konark Temple",
+    position: new THREE.Vector3(12, 2, 5), // Adjust based on model
+    info: {
+      title: "Seven Horses of Konark Temple",
+      src: "assets/Images/2.png",
       content:
         "The wheels of the Konark Sun Temple, also called chakras, are not only symbolic but also function as sandhyals. There are 24 intricately carved stone wheels which represent the hours of the day. These wheels can be used to tell time by observing the shadows cast by the spokes of the wheel as the sun moves across the sky.",
     },
@@ -274,6 +296,7 @@ window.addEventListener("click", onMouseClick);
 function showInfoPanel(info) {
   const infoPanel = document.getElementById("info-panel");
   document.getElementById("info-title").textContent = info.title;
+  document.getElementById("info-image").src = info.src;
   document.getElementById("info-content").textContent = info.content;
   infoPanel.style.display = "block";
 

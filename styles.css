@@ -81,6 +81,14 @@ button:hover {
   z-index: 10; /* Fixed typo from 1-9 to a valid value */
 }
 
+#info-image {
+  width: 100%;
+  height: auto;
+  max-width: 600px; /* Limit the size of the image */
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+}
 #info-panel {
   position: absolute;
   top: 20px;
