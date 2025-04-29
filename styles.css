@@ -81,11 +81,41 @@ button:hover {
   z-index: 10; /* Fixed typo from 1-9 to a valid value */
 }
 
+#info-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 300px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  display: none;
+  font-family: Arial, sans-serif;
+  z-index: 1000;
+}
+#info-panel h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+}
+#info-panel p {
+  margin: 0;
+  font-size: 16px;
+}
+#info-panel .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #fff;
+}
+
 /* Gradient Section */
 .gradient-section {
   position: relative;
   z-index: 20;
-  height: 800px;
+  height: 750px;
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0) 0%,
