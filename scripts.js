@@ -185,7 +185,7 @@ const hotspots = [
     position: new THREE.Vector3(-4, 15, -9), // Adjust based on model
     info: {
       title: "Back View",
-      src: "assets/Images/1.jpg",
+      src: "assets/Images/back-view.jpg",
 
       content:
         "The rear entrance, less ornate but still significant, providing access to the temple's rear sections and surrounding structures.",
@@ -203,10 +203,10 @@ const hotspots = [
   },
   {
     name: "Seven Horses of Konark Temple",
-    position: new THREE.Vector3(12, 2, 5), // Adjust based on model
+    position: new THREE.Vector3(-3, 0.9, 18.7), // Adjust based on model
     info: {
       title: "Seven Horses of Konark Temple",
-      src: "assets/Images/2.png",
+      src: "assets/Images/seven-horses.jpg",
       content:
         "The wheels of the Konark Sun Temple, also called chakras, are not only symbolic but also function as sandhyals. There are 24 intricately carved stone wheels which represent the hours of the day. These wheels can be used to tell time by observing the shadows cast by the spokes of the wheel as the sun moves across the sky.",
     },
