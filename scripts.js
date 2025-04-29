@@ -162,12 +162,12 @@ scene.fog = new THREE.Fog(0x625653, 50, 110);
 //#region hotspot annotation
 const hotspots = [
   {
-    name: "Front Gate",
+    name: "Jaga Mohana",
     position: new THREE.Vector3(5, 6, 9), // Adjust based on model
     info: {
-      title: "Front Gate",
+      title: "Jaga Mohana",
       content:
-        "The main entrance of the Konark Sun Temple, intricately carved with motifs of lions, elephants, and floral patterns. It leads to the main sanctum.",
+        "The Jagamohana of the Konark Sun Temple, a 13th-century architectural marvel in Odisha, India, serves as the main assembly hall. Its intricately carved stone structure, though partially ruined, showcases exquisite Kalinga artistry.",
     },
   },
   {
@@ -242,9 +242,9 @@ function createHotspot(position, name) {
   return sprite;
 }
 
-const hotspotSprites = hotspots.map((hotspot) =>
-  createHotspot(hotspot.position, hotspot.name)
-);
+const hotspotSprites = hotspots.map((hotspot) => {
+  createHotspot(hotspot.position, hotspot.name);
+});
 
 // Raycaster for hotspot interaction
 const raycaster = new THREE.Raycaster();
@@ -283,7 +283,7 @@ function showInfoPanel(info) {
     setCameraView(new THREE.Vector3(-8, 20, -26), new THREE.Vector3(0, 0, 0));
   }
   if (info.title === "Wheel") {
-    setCameraView(new THREE.Vector3(10, 0, 10), new THREE.Vector3(3, 0, 3));
+    setCameraView(new THREE.Vector3(1, 0, 10), new THREE.Vector3(3, 0, 3));
   }
 }
 
