@@ -9,7 +9,7 @@ const enums = {
   JAGAMOHANA: "JagaMohana",
   BACK_VIEW: "Back View",
   WHEEL: "Wheel",
-  SEVEN_HORSES: "Seven Horses of Konark Temple",
+  SEVEN_HORSES: "Seven Horses",
 };
 
 const scene = new THREE.Scene();
@@ -27,16 +27,15 @@ const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath(
   "https://www.gstatic.com/draco/versioned/decoders/1.5.6/"
 );
-dracoLoader.setDecoderConfig({ type: "js" }); // Use JavaScript decoder
+dracoLoader.setDecoderConfig({ type: "js" });
 loader.setDRACOLoader(dracoLoader);
 
 const loadingContainer = document.getElementById("loading-container");
 const threejsContainer = document.getElementById("threejs-container");
 
 const models = [];
-let mixer; // for birds animation
+let mixer;
 
-// Temple Model
 loader.load(
   "assets/3D Models/konark_optimised_13mb.glb",
   (gltf) => {
@@ -73,7 +72,6 @@ loader.load(
   }
 );
 
-// Bird
 loader.load(
   "assets/3D Models/konark-sun-temple_animated1.glb",
   (gltf) => {
@@ -115,7 +113,6 @@ loader.load(
   }
 );
 
-// Function to check if models are loaded or not
 function checkLoadingComplete() {
   let isEverythingLoaded = true;
 
@@ -162,7 +159,6 @@ const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight2.position.set(-10, 10, -12);
 scene.add(directionalLight2);
 
-// Add linear fog
 scene.fog = new THREE.Fog(0x625653, 50, 110);
 
 //#endregion
@@ -171,29 +167,27 @@ scene.fog = new THREE.Fog(0x625653, 50, 110);
 const hotspots = [
   {
     name: "JagaMohana",
-    position: new THREE.Vector3(5, 10, 9), // Adjust based on model
+    position: new THREE.Vector3(5, 10, 9),
     info: {
       title: "JagaMohana",
       src: "assets/Images/1.jpg",
-
       content:
         "The main entrance to the temple, adorned with intricate carvings and sculptures. It serves as a grand entry point to the temple complex. The JagaMohana is the assembly hall of the temple, where devotees would gather for rituals and ceremonies. It is characterized by its ornate architecture and detailed stone carvings.",
     },
   },
   {
     name: "Back View",
-    position: new THREE.Vector3(-4, 15, -9), // Adjust based on model
+    position: new THREE.Vector3(-4, 15, -9),
     info: {
       title: "Back View",
       src: "assets/Images/back-view.jpg",
-
       content:
         "The rear entrance, less ornate but still significant, providing access to the temple's rear sections and surrounding structures.",
     },
   },
   {
     name: "Wheel",
-    position: new THREE.Vector3(12, 2, 5), // Adjust based on model
+    position: new THREE.Vector3(9, 1, 10.5),
     info: {
       title: "Wheel",
       src: "assets/Images/2.png",
@@ -202,10 +196,10 @@ const hotspots = [
     },
   },
   {
-    name: "Seven Horses of Konark Temple",
-    position: new THREE.Vector3(-3, 2, 20.7), // Adjust based on model
+    name: "Seven Horses",
+    position: new THREE.Vector3(-6, 1.5, 20.7),
     info: {
-      title: "Seven Horses of Konark Temple",
+      title: "Seven Horses",
       src: "assets/Images/seven-horses.jpg",
       content:
         "The wheels of the Konark Sun Temple, also called chakras, are not only symbolic but also function as sandhyals. There are 24 intricately carved stone wheels which represent the hours of the day. These wheels can be used to tell time by observing the shadows cast by the spokes of the wheel as the sun moves across the sky.",
@@ -214,26 +208,21 @@ const hotspots = [
 ];
 
 function createHotspot(position, name) {
-  // Create a canvas
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
-  // Set initial font for measurement
   context.font = "bold 45px Calibri";
   const textMetrics = context.measureText(name);
   const textWidth = textMetrics.width;
-  const textHeight = 45; // Approximate height of the font
+  const textHeight = 45;
 
-  // Calculate canvas size with padding
-  const padding = 20; // Padding around the text
-  canvas.width = Math.ceil(textWidth) + padding * 2; // Width based on text + padding
-  canvas.height = textHeight + padding * 2; // Height based on font size + padding
+  const padding = 20;
+  canvas.width = Math.ceil(textWidth) + padding * 2;
+  canvas.height = textHeight + padding * 2;
 
-  // Redraw with the new canvas size
-  context.font = "bold 45px Calibri"; // Reapply font after resizing
+  context.font = "bold 45px Calibri";
   context.textAlign = "center";
 
-  // Draw rounded rectangle
   const cornerRadius = 25;
   context.beginPath();
   context.moveTo(cornerRadius, 0);
@@ -261,18 +250,15 @@ function createHotspot(position, name) {
   context.fillStyle = "rgba(0, 0, 0, 0.7)";
   context.fill();
 
-  // Draw text
   context.fillStyle = "white";
   context.fillText(name, canvas.width / 2, canvas.height / 2 + textHeight / 3);
 
-  // Create sprite
   const texture = new THREE.CanvasTexture(canvas);
   const material = new THREE.SpriteMaterial({ map: texture });
   const sprite = new THREE.Sprite(material);
   sprite.position.copy(position);
 
-  // Adjust sprite scale to maintain consistent visual size
-  const baseWidth = 256; // Reference width for scaling
+  const baseWidth = 256;
   const scaleFactor = canvas.width / baseWidth;
   sprite.scale.set(4 * scaleFactor, 2 * (canvas.height / 128), 1);
 
@@ -285,12 +271,13 @@ const hotspotSprites = hotspots.map((hotspot) =>
   createHotspot(hotspot.position, hotspot.name)
 );
 
-// Raycaster for hotspot interaction
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 function onMouseClick(event) {
-  event.preventDefault();
+  const infoPanel = document.getElementById("info-panel");
+  const isInfoPanelOpen = infoPanel.style.display === "block";
+
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -298,17 +285,22 @@ function onMouseClick(event) {
   const intersects = raycaster.intersectObjects(hotspotSprites);
 
   if (intersects.length > 0) {
+    event.preventDefault(); // Prevent OrbitControls from handling hotspot clicks
     const hotspot = intersects[0].object;
     const hotspotData = hotspots.find((h) => h.name === hotspot.userData.name);
     if (hotspotData) {
       showInfoPanel(hotspotData.info);
     }
+  } else if (isInfoPanelOpen) {
+    event.preventDefault(); // Prevent OrbitControls when closing info panel
+    closeInfoPanel();
+    setDefaultCameraView();
   }
+  // If info panel is not open and no hotspot is clicked, do nothing, allowing OrbitControls to handle panning
 }
 
 window.addEventListener("click", onMouseClick);
 
-// Info Panel Functions
 function showInfoPanel(info) {
   const infoPanel = document.getElementById("info-panel");
   document.getElementById("info-title").textContent = info.title;
@@ -316,7 +308,6 @@ function showInfoPanel(info) {
   document.getElementById("info-content").textContent = info.content;
   infoPanel.style.display = "block";
 
-  // set camera view based on the hotspot clicked
   if (info.title === "JagaMohana") {
     setCameraView(new THREE.Vector3(2, 15, 26), new THREE.Vector3(0, 0, 0));
   }
@@ -324,10 +315,10 @@ function showInfoPanel(info) {
     setCameraView(new THREE.Vector3(-8, 20, -26), new THREE.Vector3(0, 0, 0));
   }
   if (info.title === "Wheel") {
-    setCameraView(new THREE.Vector3(10, 0, 10), new THREE.Vector3(3, 0, 3));
+    setCameraView(new THREE.Vector3(12, 2, 8), new THREE.Vector3(8, 0, 8));
   }
-  if (info.title === "Seven Horses of Konark Temple") {
-    setCameraView(new THREE.Vector3(-3, 2, 18.7), new THREE.Vector3(0, 0, 16));
+  if (info.title === "Seven Horses") {
+    setCameraView(new THREE.Vector3(4, 2, 26), new THREE.Vector3(-2, 0, 20));
   }
 }
 
@@ -335,10 +326,17 @@ function closeInfoPanel() {
   document.getElementById("info-panel").style.display = "none";
 }
 
-//  event listener to close button
+function setDefaultCameraView() {
+  setCameraView(new THREE.Vector3(15, 15, 30), new THREE.Vector3(0, 0, 0));
+  controls.autoRotate = true;
+}
+
 document
   .querySelector("#info-panel .close-btn")
-  .addEventListener("click", closeInfoPanel);
+  .addEventListener("click", () => {
+    closeInfoPanel();
+    setDefaultCameraView();
+  });
 //#endregion
 
 //#region Render & Animation
@@ -351,7 +349,7 @@ renderer.setPixelRatio(Math.min(2, devicePixelRatio));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.4; // Reduced exposure (default was 1.0)
+renderer.toneMappingExposure = 0.4;
 renderer.outputEncoding = THREE.sRGBEncoding;
 
 if (WebGL.isWebGL2Available()) {
@@ -379,8 +377,8 @@ renderer.setAnimationLoop(() => {
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
-controls.minDistance = 20;
-controls.maxDistance = 50;
+controls.minDistance = 5;
+controls.maxDistance = 40;
 controls.minPolarAngle = Math.PI / 12;
 controls.maxPolarAngle = Math.PI / 2 - Math.PI / 12;
 
@@ -409,10 +407,6 @@ function setCameraView(position, target) {
 }
 
 const maxDim = 14;
-// document.getElementById("wheelView").addEventListener("click", () => {
-//   setCameraView(new THREE.Vector3(-7, 5, 7), new THREE.Vector3(0, 0, 0));
-// });
-
 document.getElementById("topView").addEventListener("click", () => {
   setCameraView(
     new THREE.Vector3(0, maxDim * 4, 0),
